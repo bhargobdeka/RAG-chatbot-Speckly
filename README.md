@@ -40,6 +40,15 @@ To get started with the RAG chatbot for Speckle's developer documentation, follo
 5. Run the streamlit app: `streamlit run app/client.py`
 6. Type your question in the space provided to get a response.
 
+### Streamlit UI
+
+This is how the app looks like!
+
+<p align="center">
+  <img src=app-01.png width="700px" height="500px" >
+  <br>
+</p>
+
 ### Contributing
 
 Contributions to this project are welcome! If you're interested in collaborating or have suggestions for improvements, please feel free to open an issue or submit a pull request.
