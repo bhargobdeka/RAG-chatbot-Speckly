@@ -14,4 +14,4 @@ class GraphState(TypedDict):
 
     input: str
     generation: str
-    documents: List[str]
+    documents: str #List[str]

@@ -13,7 +13,7 @@ utils_dir = os.path.join(os.path.dirname(current_dir), 'utils')
 sys.path.append(utils_dir)
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-
+from typing import List, Any, Union, Dict
 from utils.vector_store import create_vector_store
 from utils.grader import GraderUtils
 from utils.graph import GraphState
@@ -22,9 +22,11 @@ from utils.nodes import GraphNodes
 from utils.edges import EdgeGraph
 from langgraph.graph import END, StateGraph
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from langserve import add_routes
-from document import Document
-
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv()) # important line if cannot load api key
 
@@ -129,7 +131,7 @@ workflow.add_conditional_edges(
 )
 
 # Compile
-network = workflow.compile()
+chain = workflow.compile()
 
 ## Create the FastAPI app
 
@@ -140,12 +142,25 @@ app = FastAPI(
     
 )
 
+@app.get("/")
+async def redirect_root_to_docs():
+    return RedirectResponse("/docs")
+
+class Input(BaseModel):
+    input: str
+
+
+class Output(BaseModel):
+    output: dict
+    
+
 # add routes
 add_routes(
    app,
-   network,
-   path="/speckle_chat"
+   chain.with_types(input_type=Input, output_type=Output),
+   path="/speckle_chat",
 )
+
 
 if __name__ == "__main__":
     import uvicorn
