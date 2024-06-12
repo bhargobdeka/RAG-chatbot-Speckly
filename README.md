@@ -14,8 +14,19 @@ As developers, we often find ourselves navigating through extensive documentatio
 
 ### Directory Structure
 
-- `app/`: This directory contains the server code for running the chatbot application. To start the server, run
-  `python app/server.py`.
+- `app/`: This directory contains the server code `server.py` and the client code `client.py` for running the chatbot application.
+  To start the server, run
+
+```
+python app/server.py
+```
+
+Then, to start the streamlit app, open another terminal and run
+
+```
+streamlit run app/client.py
+```
+
 - `utils/`: This directory contains the building blocks and utility functions used by the chatbot, such as document retrieval, answer generation, and grading mechanisms.
 
 ### Getting Started
@@ -26,7 +37,8 @@ To get started with the RAG chatbot for Speckle's developer documentation, follo
 2. Navigate to the project directory: `cd RAG-chatbot-Speckly`
 3. Install the required dependencies: `pip install -r requirements.txt`
 4. Start the server: `python app/server.py`
-5. Access the chatbot interface with Langchain's playground at the provided URL.
+5. Run the streamlit app: `streamlit run app/client.py`
+6. Type your question in the space provided to get a response.
 
 ### Contributing
 
