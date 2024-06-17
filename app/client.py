@@ -1,7 +1,5 @@
 import streamlit as st
 from langserve import RemoteRunnable
-import requests
-import json
 from pprint import pprint
 
 st.title('Welcome to Speckle Server')
