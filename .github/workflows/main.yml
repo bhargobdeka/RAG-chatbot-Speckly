@@ -54,7 +54,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -72,7 +72,7 @@ jobs:
           DEPLOY_COMMAND="sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
                           sudo docker stop app-container || true && \
                           sudo docker rm app-container || true && \
-                          sudo docker run -d --name app-container -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+                          sudo docker run -d --name app-container -p 8080:8080 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
           aws ssm send-command \
             --instance-ids $EC2_INSTANCE_ID \
