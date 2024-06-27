@@ -60,7 +60,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to EC2
+      - name: Check instance status
         env:
           EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
           ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
@@ -69,13 +69,14 @@ jobs:
         run: |
           aws ec2 wait instance-status-ok --instance-ids $EC2_INSTANCE_ID
 
-          DEPLOY_COMMAND="sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
-                          sudo docker stop app-container || true && \
-                          sudo docker rm app-container || true && \
-                          sudo docker run -d --name app-container -p 8080:8080 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Pull Docker image
+        run: |
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-          aws ssm send-command \
-            --instance-ids $EC2_INSTANCE_ID \
-            --document-name "AWS-RunShellScript" \
-            --parameters commands="[$DEPLOY_COMMAND]" \
-            --output text
+      - name: Run Docker container
+        run: |
+          docker run -d --name app-container -p 8080:8080 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        #   sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
+        #     sudo docker stop app-container || true && \
+        #     sudo docker rm app-container || true && \
+        #     sudo docker run -d --name app-container -p 8080:8080 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
