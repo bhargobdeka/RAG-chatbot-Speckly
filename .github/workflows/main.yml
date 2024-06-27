@@ -82,8 +82,8 @@ jobs:
           aws ec2 wait instance-status-ok --instance-ids $EC2_INSTANCE_ID
 
       - name: Login to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Pull Docker image
         run: |
