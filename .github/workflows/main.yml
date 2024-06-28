@@ -91,7 +91,7 @@ jobs:
 
       - name: Stop and remove  container if running
         run: |
-          docker ps -q --filter "name=ragtest" | grep -q . && docker stop ragtest && docker rm -fv mltest
+          docker ps -q --filter "name=ragtest" | grep -q . && docker stop ragtest && docker rm -fv ragtest
 
       - name: Run Docker Container
         run: |
