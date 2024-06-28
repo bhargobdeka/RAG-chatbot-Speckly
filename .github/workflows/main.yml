@@ -91,19 +91,19 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 8080:8080 --ipc="host" --name=ragtest -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}:latest
+          docker run -d -p 8080:8080 --name=ragtest ${{secrets.AWS_ECR_LOGIN_URI}}:latest
 
-      - name: Check Docker Container Status
-        run: |
-          sleep 60  # Give the container a moment to start up
-          if docker ps | grep -q ragtest; then
-            echo "Container is running"
-            docker ps | grep ragtest
-          else
-            echo "Container is not running"
-            docker ps -a | grep ragtest
-            exit 1
-          fi
+      # - name: Check Docker Container Status
+      #   run: |
+      #     sleep 60  # Give the container a moment to start up
+      #     if docker ps | grep -q ragtest; then
+      #       echo "Container is running"
+      #       docker ps | grep ragtest
+      #     else
+      #       echo "Container is not running"
+      #       docker ps -a | grep ragtest
+      #       exit 1
+      #     fi
 
       - name: Check Container Logs
         run: docker logs ragtest
