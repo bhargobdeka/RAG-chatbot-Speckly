@@ -91,7 +91,9 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 8080:8080 --name=ragtest ${{secrets.AWS_ECR_LOGIN_URI}}:latest
+          docker run -d -p 8080:8080 --name=ragtest -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
+           -e LANGCHAIN_API_KEY=${{secrets.LANGCHAIN_API_KEY}} \
+            ${{secrets.AWS_ECR_LOGIN_URI}}:latest
 
       # - name: Check Docker Container Status
       #   run: |
