@@ -89,6 +89,10 @@ jobs:
         run: |
           docker pull ${{secrets.AWS_ECR_LOGIN_URI}}:latest
 
+      - name: Stop and remove  container if running
+        run: |
+          docker ps -q --filter "name=ragtest" | grep -q . && docker stop ragtest && docker rm -fv mltest
+
       - name: Run Docker Container
         run: |
           docker run -d -p 8080:8080 --name=ragtest -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
