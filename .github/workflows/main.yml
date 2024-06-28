@@ -95,7 +95,7 @@ jobs:
 
       - name: Check Docker Container Status
         run: |
-          sleep 10  # Give the container a moment to start up
+          sleep 60  # Give the container a moment to start up
           if docker ps | grep -q ragtest; then
             echo "Container is running"
             docker ps | grep ragtest
