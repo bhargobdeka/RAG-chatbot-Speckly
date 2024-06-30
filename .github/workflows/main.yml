@@ -25,7 +25,7 @@ jobs:
       - name: Run unit tests
         run: echo "Running unit tests"
 
-  build-and-push-ecr-image:
+  delivery:
     name: Continuous Delivery
     needs: integration
     runs-on: ubuntu-latest
@@ -44,11 +44,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
       - name: Build, tag, and push ARM64 image to Amazon ECR
         env:
@@ -60,9 +60,9 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-  Continuous-Deployment:
-    name: Deploy to EC2 instance
-    needs: build-and-push-ecr-image
+  Deployment:
+    name: Continuous Deployment
+    needs: delivery
     runs-on: self-hosted
     steps:
       - name: Configure AWS credentials
@@ -89,27 +89,11 @@ jobs:
         run: |
           docker pull ${{secrets.AWS_ECR_LOGIN_URI}}:latest
 
-      - name: Stop and remove  container if running
-        run: |
-          docker ps -q --filter "name=ragtest" | grep -q . && docker stop ragtest && docker rm ragtest
-
       - name: Run Docker Container
         run: |
           docker run -d -p 8080:8080 --name=ragtest -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
            -e LANGCHAIN_API_KEY=${{secrets.LANGCHAIN_API_KEY}} \
             ${{secrets.AWS_ECR_LOGIN_URI}}:latest
-
-      # - name: Check Docker Container Status
-      #   run: |
-      #     sleep 60  # Give the container a moment to start up
-      #     if docker ps | grep -q ragtest; then
-      #       echo "Container is running"
-      #       docker ps | grep ragtest
-      #     else
-      #       echo "Container is not running"
-      #       docker ps -a | grep ragtest
-      #       exit 1
-      #     fi
 
       - name: Check Container Logs
         run: docker logs ragtest
